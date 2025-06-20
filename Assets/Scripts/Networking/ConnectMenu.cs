@@ -24,9 +24,12 @@ public class ConnectMenu : MonoBehaviour
 
     public void Connect()
     {
-        if (string.IsNullOrWhiteSpace(usernameField.text) 
-         || string.IsNullOrWhiteSpace(ipField.text))
+        if (string.IsNullOrWhiteSpace(usernameField.text)
+            || string.IsNullOrWhiteSpace(ipField.text))
+        {
+            Debug.LogWarning("Invalid username or IP");
             return;
+        }
         
         var id = GUID.Generate().ToString();
         var playerData = new PlayerData() { id = id, name = usernameField.text };

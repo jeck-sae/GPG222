@@ -14,7 +14,7 @@ public class Client : MonoBehaviour
     private bool connected = false;
     
     public static Client Instance { get; private set; }
-
+    
     private void Awake()
     {
         if (Instance == null)

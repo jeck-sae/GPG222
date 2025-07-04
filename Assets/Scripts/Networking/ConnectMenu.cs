@@ -31,8 +31,7 @@ public class ConnectMenu : MonoBehaviour
             return;
         }
         
-        var id = GUID.Generate().ToString();
-        var playerData = new PlayerData() { id = id, name = usernameField.text };
+        var playerData = new PlayerData(Guid.NewGuid().ToString(),usernameField.text);
         
         Client.Instance.ConnectToServer(ipField.text, playerData);
     }

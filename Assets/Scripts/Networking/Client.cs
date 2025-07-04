@@ -68,18 +68,23 @@ public class Client : MonoBehaviour
             
             var rms = new MemoryStream(receivedBuffer);
             var br = new BinaryReader(rms);
+
             var type = (PacketType)br.ReadInt32();
             
-            switch (type)
+            while (br.BaseStream.Position < br.BaseStream.Length)
             {
-                case PacketType:
-                    //MessagePacket messagePacket = new MessagePacket().Deserialize(receivedBuffer);
-                    //do stuff
-                    OnPacketReceived?.Invoke(null);
-                    break;
-                default:
-                    Debug.LogError("Unknown packet type received.");
-                    break;
+                switch (type)
+                {
+                    case PacketType:
+                        //MessagePacket messagePacket = new MessagePacket().Deserialize(receivedBuffer);
+                        //do stuff
+                        
+                        OnPacketReceived?.Invoke(null);
+                        break;
+                    default:
+                        Debug.LogError("Unknown packet type received.");
+                        break;
+                }
             }
         }
     }

@@ -10,7 +10,7 @@ public class Client : MonoBehaviour
     public event Action OnConnect;
 
     private Socket socket;
-    private int port = 3000;
+    private int port = 6969;
     private bool connected = false;
     
     public static Client Instance { get; private set; }

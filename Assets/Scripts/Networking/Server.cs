@@ -7,7 +7,7 @@ using System.Text;
 public class Server : MonoBehaviour
 {
     Socket serverSocket;
-    int port = 3000;
+    int port = 6969;
 
     List<Socket> clientsSocket;
 

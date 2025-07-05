@@ -68,6 +68,7 @@ public class Server : MonoBehaviour
 
                         PlayerData PD = new PlayerData (joinPKT.playerId, joinPKT.playerName);
                         ConectionInfo[i].playerdata = PD;
+                        Debug.LogError(ConectionInfo[i].playerdata.Name + "joined");
                     }
 
                     for (int j = 0; j < ConectionInfo.Count; j++)

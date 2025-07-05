@@ -49,7 +49,7 @@ public class Client : MonoBehaviour
             socket.Blocking = false;
             connected = true;
             OnConnect?.Invoke();
-            Debug.Log("Connected to server!");
+            Debug.LogError("Connected to server!");
         }
         catch (Exception e)
         {
@@ -64,16 +64,16 @@ public class Client : MonoBehaviour
 
         while (socket.Available > 0)
         {
+            Debug.LogError("reseiving packest");
             byte[] receivedBuffer = new byte[socket.Available];
             socket.Receive(receivedBuffer);
-
             var rms = new MemoryStream(receivedBuffer);
             var br = new BinaryReader(rms);
 
             var type = (PacketType)br.ReadInt32();
-
             while (br.BaseStream.Position < br.BaseStream.Length)
             {
+                Debug.LogError("inside the while");
                 switch (type)
                 {
                     case PacketType.Move:
@@ -89,14 +89,6 @@ public class Client : MonoBehaviour
                     case PacketType.PlayerJoin:
                         break;
                     case PacketType.PlayerReachedGoal:
-                        break;
-                    case PacketType.ping:
-                       
-                            pingPacket pingPKT = new pingPacket();
-                            pingPKT.Serialize();
-                        SendPacket(pingPKT);
-
-                        
                         break;
                     default:
                         Debug.LogError("Unknown packet type received.");

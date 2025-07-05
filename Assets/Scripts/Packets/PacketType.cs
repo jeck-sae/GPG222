@@ -4,5 +4,6 @@ public enum PacketType
     PlayerJoin = 1,
     PlayerReachedGoal = 2,
     GameStart = 3,
-    LoadLevel = 4
+    LoadLevel = 4,
+    ping = 5
 }

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net.Sockets;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Client : MonoBehaviour
@@ -12,9 +13,9 @@ public class Client : MonoBehaviour
     private Socket socket;
     private int port = 6969;
     private bool connected = false;
-    
+
     public static Client Instance { get; private set; }
-    
+
     private void Awake()
     {
         if (Instance == null)
@@ -28,7 +29,7 @@ public class Client : MonoBehaviour
             return;
         }
     }
-    
+
     void Update()
     {
         ReceivePackets();
@@ -37,9 +38,9 @@ public class Client : MonoBehaviour
 
     public void ConnectToServer(string ipAddress, PlayerData playerData)
     {
-        if (connected) 
+        if (connected)
             return;
-        
+
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
         try
@@ -65,12 +66,12 @@ public class Client : MonoBehaviour
         {
             byte[] receivedBuffer = new byte[socket.Available];
             socket.Receive(receivedBuffer);
-            
+
             var rms = new MemoryStream(receivedBuffer);
             var br = new BinaryReader(rms);
 
             var type = (PacketType)br.ReadInt32();
-            
+
             while (br.BaseStream.Position < br.BaseStream.Length)
             {
                 switch (type)
@@ -89,6 +90,14 @@ public class Client : MonoBehaviour
                         break;
                     case PacketType.PlayerReachedGoal:
                         break;
+                    case PacketType.ping:
+                       
+                            pingPacket pingPKT = new pingPacket();
+                            pingPKT.Serialize();
+                        SendPacket(pingPKT);
+
+                        
+                        break;
                     default:
                         Debug.LogError("Unknown packet type received.");
                         break;
@@ -96,7 +105,7 @@ public class Client : MonoBehaviour
             }
         }
     }
-    
+
     public void SendPacket(BasePacket packet)
     {
         var buffer = packet.Serialize();

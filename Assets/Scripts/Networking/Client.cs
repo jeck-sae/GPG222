@@ -75,11 +75,19 @@ public class Client : MonoBehaviour
             {
                 switch (type)
                 {
-                    case PacketType:
-                        //MessagePacket messagePacket = new MessagePacket().Deserialize(receivedBuffer);
-                        //do stuff
-                        
-                        OnPacketReceived?.Invoke(null);
+                    case PacketType.Move:
+                        var movePacket = new MovePacket();
+                        movePacket.Deserialize(br);
+                        //move player
+                        OnPacketReceived?.Invoke(movePacket);
+                        break;
+                    case PacketType.GameStart:
+                        break;
+                    case PacketType.LoadLevel:
+                        break;
+                    case PacketType.PlayerJoin:
+                        break;
+                    case PacketType.PlayerReachedGoal:
                         break;
                     default:
                         Debug.LogError("Unknown packet type received.");

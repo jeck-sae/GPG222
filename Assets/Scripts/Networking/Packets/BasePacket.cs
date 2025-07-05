@@ -1,3 +1,5 @@
+using System.IO;
+
 public enum PacketType {  }
 
 public abstract class BasePacket
@@ -9,7 +11,7 @@ public abstract class BasePacket
         return null;
     }
 
-    public void Deserialize(byte[] buffer)
+    public void Deserialize(BinaryReader br)
     {
         
     }

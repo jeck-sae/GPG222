@@ -28,6 +28,7 @@ public class Client : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
     }
 
     void Update()
@@ -41,12 +42,9 @@ public class Client : MonoBehaviour
         if (connected)
             return;
 
-        socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
         try
         {
             socket.Connect(ipAddress, port);
-            socket.Blocking = false;
             connected = true;
             OnConnect?.Invoke();
             Debug.LogError("Connected to server!");
@@ -64,16 +62,14 @@ public class Client : MonoBehaviour
 
         while (socket.Available > 0)
         {
-            Debug.LogError("reseiving packest");
             byte[] receivedBuffer = new byte[socket.Available];
             socket.Receive(receivedBuffer);
             var rms = new MemoryStream(receivedBuffer);
             var br = new BinaryReader(rms);
 
-            var type = (PacketType)br.ReadInt32();
-            while (br.BaseStream.Position < br.BaseStream.Length)
+            while (rms.Position < rms.Length)
             {
-                Debug.LogError("inside the while");
+                var type = (PacketType)br.ReadInt32();
                 switch (type)
                 {
                     case PacketType.Move:
@@ -87,8 +83,14 @@ public class Client : MonoBehaviour
                     case PacketType.LoadLevel:
                         break;
                     case PacketType.PlayerJoin:
+                        var joinPacket = new PlayerJoinPacket();
+                        joinPacket.Deserialize(br);
+                        Debug.Log($"Player joined: {joinPacket.playerName} ({joinPacket.spriteId}) [{joinPacket.playerId}]");
+                        OnPacketSent?.Invoke(joinPacket);
                         break;
                     case PacketType.PlayerReachedGoal:
+                        break;
+                    case PacketType.ping:
                         break;
                     default:
                         Debug.LogError("Unknown packet type received.");

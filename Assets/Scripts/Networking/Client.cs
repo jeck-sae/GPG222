@@ -48,6 +48,9 @@ public class Client : MonoBehaviour
             connected = true;
             OnConnect?.Invoke();
             Debug.LogError("Connected to server!");
+
+            var joinPacket = new PlayerJoinPacket(playerData.ID, 0, playerData.Name);
+            SendPacket(joinPacket);
         }
         catch (Exception e)
         {
@@ -85,7 +88,7 @@ public class Client : MonoBehaviour
                     case PacketType.PlayerJoin:
                         var joinPacket = new PlayerJoinPacket();
                         joinPacket.Deserialize(br);
-                        Debug.Log($"Player joined: {joinPacket.playerName} ({joinPacket.spriteId}) [{joinPacket.playerId}]");
+                        Debug.LogError($"Received player data: {joinPacket.playerName} ({joinPacket.spriteId}) [{joinPacket.playerId}]");
                         OnPacketSent?.Invoke(joinPacket);
                         break;
                     case PacketType.PlayerReachedGoal:

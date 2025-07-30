@@ -13,6 +13,7 @@ public class PlayerSpawner : MonoBehaviour
         {
             var go = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
             go.GetOrAddComponent<Enemy>().info = e;
+            e.Instance = go;
             go.name = e.Name;
             //setup enemy sprite and stuff
         }

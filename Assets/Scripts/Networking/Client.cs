@@ -1,13 +1,12 @@
 using System;
 using System.IO;
 using System.Net.Sockets;
+using Networking;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class Client : MonoBehaviour
 {
-    public event Action<BasePacket> OnPacketSent;
-    public event Action<BasePacket> OnPacketReceived;
     public event Action OnConnect;
 
     private Socket socket;
@@ -78,20 +77,27 @@ public class Client : MonoBehaviour
                     case PacketType.Move:
                         var movePacket = new MovePacket();
                         movePacket.Deserialize(br);
-                        //move player
-                        OnPacketReceived?.Invoke(movePacket);
+                        NetworkEvents.OnMovePacketReceived(movePacket);
                         break;
                     case PacketType.GameStart:
+                        var gameStartPacket = new GameStartPacket();
+                        gameStartPacket.Deserialize(br);
+                        NetworkEvents.OnGameStartPacketReceived(gameStartPacket);
                         break;
                     case PacketType.LoadLevel:
+                        var loadLevelPacket = new LoadLevelPacket();
+                        loadLevelPacket.Deserialize(br);
+                        NetworkEvents.OnLoadLevelPacketReceived(loadLevelPacket);
                         break;
                     case PacketType.PlayerJoin:
                         var joinPacket = new PlayerJoinPacket();
                         joinPacket.Deserialize(br);
-                        Debug.LogError($"Received player data: {joinPacket.playerName} ({joinPacket.spriteId}) [{joinPacket.playerId}]");
-                        OnPacketSent?.Invoke(joinPacket);
+                        NetworkEvents.OnPlayerJoinPacketReceived(joinPacket);
                         break;
                     case PacketType.PlayerReachedGoal:
+                        var playerReachedGoalPacket = new PlayerReachedGoalPacket();
+                        playerReachedGoalPacket.Deserialize(br);
+                        NetworkEvents.OnPlayerReachedGoalPacketReceived(playerReachedGoalPacket);
                         break;
                     case PacketType.ping:
                         break;
@@ -110,7 +116,6 @@ public class Client : MonoBehaviour
         try
         {
             socket.Send(buffer);
-            OnPacketSent?.Invoke(packet);
         }
         catch (Exception e)
         {

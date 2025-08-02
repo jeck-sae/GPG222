@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class LeaderboardManager : MonoBehaviour
@@ -14,6 +15,9 @@ public class LeaderboardManager : MonoBehaviour
 
     private List<ScoreEntry> leaderboard = new List<ScoreEntry>();
 
+    [Header("UI")]
+    public TextMeshProUGUI leaderboardText;
+
     private void Awake()
     {
         if (Instance == null)
@@ -24,9 +28,7 @@ public class LeaderboardManager : MonoBehaviour
             return;
         }
 
-        DontDestroyOnLoad(gameObject); // optional but keeps it alive between scenes
-
-        // ✅ Subscribe to the EVENT (not the method)
+        DontDestroyOnLoad(gameObject);
         Networking.NetworkEvents.PlayerReachedGoalPacketReceived += OnPlayerReachedGoalReceived;
     }
 
@@ -35,31 +37,31 @@ public class LeaderboardManager : MonoBehaviour
         Networking.NetworkEvents.PlayerReachedGoalPacketReceived -= OnPlayerReachedGoalReceived;
     }
 
-    // Called when packet is received from other players
     private void OnPlayerReachedGoalReceived(PlayerReachedGoalPacket packet)
     {
-        Debug.Log($"[Leaderboard] Player {packet.playerId} reached goal in {packet.timeTaken:F2}s");
-
         AddEntry(packet.playerId, packet.timeTaken);
     }
 
-    // Public method to also add the local player's own time
     public void AddEntry(string playerId, float timeTaken)
     {
         leaderboard.Add(new ScoreEntry { playerId = playerId, timeTaken = timeTaken });
         leaderboard.Sort((a, b) => a.timeTaken.CompareTo(b.timeTaken));
-        PrintLeaderboard();
+        UpdateLeaderboardText();
     }
 
-    public void PrintLeaderboard()
+    private void UpdateLeaderboardText()
     {
-        Debug.Log("=== Leaderboard ===");
+        if (leaderboardText == null)
+            return;
+
+        leaderboardText.text = "=== Leaderboard ===\n";
+        int rank = 1;
         foreach (var entry in leaderboard)
         {
-            Debug.Log($"{entry.playerId}: {entry.timeTaken:F2}s");
+            leaderboardText.text += $"{rank}. {entry.playerId}: {entry.timeTaken:F2}s\n";
+            rank++;
         }
     }
 
-    // Optional: get current leaderboard list for UI
     public List<ScoreEntry> GetLeaderboard() => leaderboard;
 }

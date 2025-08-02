@@ -1,19 +1,20 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Net.Sockets;
-using Networking;
-using Unity.VisualScripting;
 using UnityEngine;
+using Networking;
 
 public class Client : MonoBehaviour
 {
+    public static Client Instance { get; private set; }
+
     public event Action OnConnect;
 
     private Socket socket;
     private int port = 6969;
     private bool connected = false;
 
-    public static Client Instance { get; private set; }
+    public PlayerData playerData { get; private set; }
 
     private void Awake()
     {
@@ -27,6 +28,7 @@ public class Client : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
     }
 
@@ -35,7 +37,6 @@ public class Client : MonoBehaviour
         ReceivePackets();
     }
 
-
     public void ConnectToServer(string ipAddress, PlayerData playerData)
     {
         if (connected)
@@ -43,6 +44,8 @@ public class Client : MonoBehaviour
 
         try
         {
+            this.playerData = playerData; // ✅ save player data for later use
+
             socket.Connect(ipAddress, port);
             connected = true;
             OnConnect?.Invoke();
@@ -66,8 +69,9 @@ public class Client : MonoBehaviour
         {
             byte[] receivedBuffer = new byte[socket.Available];
             socket.Receive(receivedBuffer);
-            var rms = new MemoryStream(receivedBuffer);
-            var br = new BinaryReader(rms);
+
+            using var rms = new MemoryStream(receivedBuffer);
+            using var br = new BinaryReader(rms);
 
             while (rms.Position < rms.Length)
             {
@@ -95,11 +99,12 @@ public class Client : MonoBehaviour
                         NetworkEvents.OnPlayerJoinPacketReceived(joinPacket);
                         break;
                     case PacketType.PlayerReachedGoal:
-                        var playerReachedGoalPacket = new PlayerReachedGoalPacket();
-                        playerReachedGoalPacket.Deserialize(br);
-                        NetworkEvents.OnPlayerReachedGoalPacketReceived(playerReachedGoalPacket);
+                        var goalPacket = new PlayerReachedGoalPacket();
+                        goalPacket.Deserialize(br);
+                        NetworkEvents.OnPlayerReachedGoalPacketReceived(goalPacket);
                         break;
                     case PacketType.ping:
+                        // Do nothing or handle ping
                         break;
                     default:
                         Debug.LogError("Unknown packet type received.");

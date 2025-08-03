@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class Server : MonoBehaviour
@@ -11,7 +12,7 @@ public class Server : MonoBehaviour
     Socket serverSocket;
     int port = 6969;
 
-    List<ConectionInfo> ConnectionInfo;
+    [ShowInInspector] List<ConectionInfo> ConnectionInfo;
 
     void Start()
     {
@@ -52,8 +53,7 @@ public class Server : MonoBehaviour
                     
                     if (packet.type == PacketType.PlayerJoin)
                     {
-                        PlayerJoinPacket joinPKT = new PlayerJoinPacket();
-                        joinPKT.Deserialize(br);
+                        PlayerJoinPacket joinPKT = packet as PlayerJoinPacket;
 
                         PlayerData pd = new PlayerData(joinPKT.playerId, joinPKT.playerName);
                         ConnectionInfo[i].playerdata = pd;
@@ -62,8 +62,11 @@ public class Server : MonoBehaviour
                         // Send info of already connected players to the new one
                         foreach (var alreadyConnected in ConnectionInfo)
                         {
+                            Debug.Log("mhmhm" + alreadyConnected.playerdata.Name);
                             if(alreadyConnected.playerdata.ID == pd.ID)
                                 continue;
+                            
+                            Debug.Log("aaa" + alreadyConnected.playerdata.Name);
                             PlayerJoinPacket joinPacket = new PlayerJoinPacket(
                                 alreadyConnected.playerdata.ID, 0, alreadyConnected.playerdata.Name);
                             ConnectionInfo[i].socket.Send(joinPacket.Serialize());
@@ -80,8 +83,9 @@ public class Server : MonoBehaviour
                 }
             }
         }
-        catch
+        catch (Exception e)
         {
+            Debug.LogError(e.Message);
         }
     }
     IEnumerator Pingclient(ConectionInfo player)

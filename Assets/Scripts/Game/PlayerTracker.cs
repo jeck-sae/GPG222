@@ -3,12 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Networking;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class PlayerTracker : MonoBehaviour
 {
     protected static PlayerTracker instance;
-    Dictionary<string, PlayerData>  players = new ();
+    [ShowInInspector] Dictionary<string, PlayerData>  players = new ();
     public PlayerData MyInfo { get; protected set; }
     
     public static int Count => instance.players.Count + 1;
@@ -49,12 +50,6 @@ public class PlayerTracker : MonoBehaviour
             return;
         }
 
-        if (MyInfo == null)
-        {
-            MyInfo = new PlayerData(data.playerId, data.playerName);
-            return;
-        }
-        
         players.Add(data.playerId, new PlayerData(data.playerId, data.playerName));
     }
 }

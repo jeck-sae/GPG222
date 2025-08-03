@@ -518,6 +518,53 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &234766983
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 234766985}
+  - component: {fileID: 234766984}
+  m_Layer: 0
+  m_Name: Menu
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &234766984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 234766983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa36fe6ad476f143bb3002ebac4026d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  usernameField: {fileID: 383164519}
+  ipField: {fileID: 1356265629}
+  loadSceneOnConnect: LevelSelect
+--- !u!4 &234766985
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 234766983}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &383164515
 GameObject:
   m_ObjectHideFlags: 0
@@ -1157,7 +1204,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1611053701}
+      - m_Target: {fileID: 234766984}
         m_TargetAssemblyTypeName: ConnectMenu, Assembly-CSharp
         m_MethodName: Connect
         m_Mode: 1
@@ -1650,6 +1697,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9f8bc31db8db7d4e9dbe9e0388da9e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  connected: 0
 --- !u!4 &1611053700
 Transform:
   m_ObjectHideFlags: 0
@@ -1674,12 +1722,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1611053698}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2aa36fe6ad476f143bb3002ebac4026d, type: 3}
+  m_Script: {fileID: 11500000, guid: 6cafb683075240e2add50338345e6e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  usernameField: {fileID: 383164519}
-  ipField: {fileID: 1356265629}
-  loadSceneOnConnect: LevelSelect
 --- !u!1 &1633378405
 GameObject:
   m_ObjectHideFlags: 0
@@ -2158,3 +2203,4 @@ SceneRoots:
   - {fileID: 61902626}
   - {fileID: 1893037787}
   - {fileID: 1611053700}
+  - {fileID: 234766985}

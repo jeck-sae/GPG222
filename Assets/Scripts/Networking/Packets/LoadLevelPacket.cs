@@ -2,14 +2,14 @@ using System.IO;
 
 public class LoadLevelPacket : BasePacket
 {
-    public int levelId;
+    public string levelId;
 
     public LoadLevelPacket()
     {
         type = PacketType.LoadLevel;
     }
 
-    public LoadLevelPacket(int levelId)
+    public LoadLevelPacket(string levelId)
     {
         this.levelId = levelId;
         type = PacketType.LoadLevel;
@@ -26,6 +26,6 @@ public class LoadLevelPacket : BasePacket
 
     public override void Deserialize(BinaryReader br)
     {
-        levelId = br.ReadInt32();
+        levelId = br.ReadString();
     }
 }

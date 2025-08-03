@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Networking;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelSelection : MonoBehaviour
 {
@@ -18,9 +19,10 @@ public class LevelSelection : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void LoadLevel(int levelId)
+    public void LoadLevel(string levelId)
     {
         LoadLevelPacket packet = new LoadLevelPacket { levelId = levelId };
-        NetworkEvents.OnLoadLevelPacketReceived(packet);
+        Client.Instance.SendPacket(packet);
+        SceneManager.LoadScene(levelId);
     }
 }

@@ -74,24 +74,30 @@ public class Client : MonoBehaviour
             using var rms = new MemoryStream(receivedBuffer);
             using var br = new BinaryReader(rms);
 
+            Debug.Log("outside");
             while (rms.Position < rms.Length)
             {
+                Debug.Log("Deser");
                 var packet = BasePacket.DeserializePacket(br);
                 switch (packet.type)
                 {
                     case PacketType.Move:
+                        Debug.Log("Move");
                         NetworkEvents.OnMovePacketReceived(packet as MovePacket);
                         break;
                     case PacketType.LoadLevel:
+                        Debug.Log("LoadLevel");
                         NetworkEvents.OnLoadLevelPacketReceived(packet as LoadLevelPacket);
                         break;
                     case PacketType.PlayerJoin:
+                        Debug.Log((packet as PlayerJoinPacket).playerName + " joined!");
                         NetworkEvents.OnPlayerJoinPacketReceived(packet as PlayerJoinPacket);
                         break;
                     case PacketType.PlayerReachedGoal:
                         NetworkEvents.OnPlayerReachedGoalPacketReceived(packet as PlayerReachedGoalPacket);
                         break;
                     case PacketType.ping:
+                        Debug.Log("ping");
                         break;
                     default:
                         Debug.LogError("Unknown packet type received.");

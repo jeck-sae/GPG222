@@ -5,7 +5,6 @@ namespace Networking
     public static class NetworkEvents
     {
         public static event Action<MovePacket> MovePacketReceived;
-        public static event Action<GameStartPacket> GameStartPacketReceived;
         public static event Action<PlayerReachedGoalPacket>  PlayerReachedGoalPacketReceived;
         public static event Action<LoadLevelPacket>  LoadLevelPacketReceived;
         public static event Action<PlayerJoinPacket>  PlayerJoinPacketReceived;
@@ -13,11 +12,6 @@ namespace Networking
         public static void OnMovePacketReceived(MovePacket packet)
         {
             MovePacketReceived?.Invoke(packet);
-        }
-
-        public static void OnGameStartPacketReceived(GameStartPacket packet)
-        {
-            GameStartPacketReceived?.Invoke(packet);
         }
 
         public static void OnPlayerReachedGoalPacketReceived(PlayerReachedGoalPacket packet)

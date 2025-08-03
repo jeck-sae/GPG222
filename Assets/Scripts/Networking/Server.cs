@@ -62,11 +62,9 @@ public class Server : MonoBehaviour
                         // Send info of already connected players to the new one
                         foreach (var alreadyConnected in ConnectionInfo)
                         {
-                            Debug.Log("mhmhm" + alreadyConnected.playerdata.Name);
                             if(alreadyConnected.playerdata.ID == pd.ID)
                                 continue;
                             
-                            Debug.Log("aaa" + alreadyConnected.playerdata.Name);
                             PlayerJoinPacket joinPacket = new PlayerJoinPacket(
                                 alreadyConnected.playerdata.ID, 0, alreadyConnected.playerdata.Name);
                             ConnectionInfo[i].socket.Send(joinPacket.Serialize());

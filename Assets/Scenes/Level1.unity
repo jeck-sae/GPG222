@@ -209,7 +209,7 @@ GameObject:
   - component: {fileID: 211272144}
   - component: {fileID: 211272143}
   - component: {fileID: 211272142}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Platformer (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -535,6 +535,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a66b2b8b6dbbb94bae0a5f0589e7243, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  leaderboardText: {fileID: 0}
 --- !u!4 &518025245
 Transform:
   m_ObjectHideFlags: 0
@@ -561,7 +562,7 @@ GameObject:
   - component: {fileID: 756797293}
   - component: {fileID: 756797292}
   - component: {fileID: 756797291}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Platformer (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -901,7 +902,7 @@ Transform:
   m_GameObject: {fileID: 886662985}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.35, y: 1.89, z: 0}
+  m_LocalPosition: {x: -12.38, y: 1.67, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -916,11 +917,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 886662985}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 183ce009ce73a437f948dd08c9a74907, type: 3}
+  m_Script: {fileID: 11500000, guid: 70b0e0398783fa04e9819f055280a84c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  body: {fileID: 0}
+  moveSpeed: 7
+  jumpForce: 6
+  fallMultiplier: 2.5
+  lowJumpMultiplier: 2
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  rayLength: 0.1
+  rayOffsetLeft: {x: -0.5, y: -0.5}
+  rayOffsetCenter: {x: 0, y: -0.5}
+  rayOffsetRight: {x: 0.5, y: -0.5}
 --- !u!1 &1397679518
 GameObject:
   m_ObjectHideFlags: 0
@@ -932,7 +942,7 @@ GameObject:
   - component: {fileID: 1397679521}
   - component: {fileID: 1397679520}
   - component: {fileID: 1397679519}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Platformer (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1062,7 +1072,7 @@ GameObject:
   - component: {fileID: 1657667569}
   - component: {fileID: 1657667568}
   - component: {fileID: 1657667567}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Platformer (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1297,7 +1307,7 @@ GameObject:
   - component: {fileID: 1893368248}
   - component: {fileID: 1893368247}
   - component: {fileID: 1893368246}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Platformer
   m_TagString: Untagged
   m_Icon: {fileID: 0}

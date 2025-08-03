@@ -11,11 +11,11 @@ public class Server : MonoBehaviour
     Socket serverSocket;
     int port = 6969;
 
-    List<ConectionInfo> ConectionInfo;
+    List<ConectionInfo> ConnectionInfo;
 
     void Start()
     {
-        ConectionInfo = new List<ConectionInfo>();
+        ConnectionInfo = new List<ConectionInfo>();
         serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         serverSocket.Bind(new IPEndPoint(IPAddress.Any, port));
         serverSocket.Listen(5);
@@ -27,7 +27,7 @@ public class Server : MonoBehaviour
         try
         {
             ConectionInfo CI = new ConectionInfo() { socket = serverSocket.Accept() };
-            ConectionInfo.Add(CI);
+            ConnectionInfo.Add(CI);
             Debug.LogError("Client connected: ");
             StartCoroutine(Pingclient(CI));
         }
@@ -38,53 +38,43 @@ public class Server : MonoBehaviour
         try
         {
 
-            for (int i = 0; i < ConectionInfo.Count; i++)
+            for (int i = 0; i < ConnectionInfo.Count; i++)
             {
-                if (ConectionInfo[i].socket.Available > 0)
+                if (ConnectionInfo[i].socket.Available > 0)
                 {
-                    byte[] buffer = new byte[ConectionInfo[i].socket.Available];
-                    ConectionInfo[i].socket.Receive(buffer);
+                    byte[] buffer = new byte[ConnectionInfo[i].socket.Available];
+                    ConnectionInfo[i].socket.Receive(buffer);
 
                     var rms = new MemoryStream(buffer);
                     var br = new BinaryReader(rms);
 
-                    var type = (PacketType)br.ReadInt32();
-
-                    if (type == PacketType.PlayerJoin)
+                    var packet = BasePacket.DeserializePacket(br);
+                    
+                    if (packet.type == PacketType.PlayerJoin)
                     {
                         PlayerJoinPacket joinPKT = new PlayerJoinPacket();
                         joinPKT.Deserialize(br);
 
-                        PlayerData PD = new PlayerData(joinPKT.playerId, joinPKT.playerName);
-                        ConectionInfo[i].playerdata = PD;
-                        Debug.LogError(ConectionInfo[i].playerdata.Name + " joined");
-                        
-                        //SENDING IT BACK FOR TESTING
-                        ConectionInfo[i].socket.Send(joinPKT.Serialize());
-                        //###########################
+                        PlayerData pd = new PlayerData(joinPKT.playerId, joinPKT.playerName);
+                        ConnectionInfo[i].playerdata = pd;
+                        Debug.LogError(ConnectionInfo[i].playerdata.Name + " joined");
+
+                        // Send info of already connected players to the new one
+                        foreach (var alreadyConnected in ConnectionInfo)
+                        {
+                            if(alreadyConnected.playerdata.ID == pd.ID)
+                                continue;
+                            PlayerJoinPacket joinPacket = new PlayerJoinPacket(
+                                alreadyConnected.playerdata.ID, 0, alreadyConnected.playerdata.Name);
+                            ConnectionInfo[i].socket.Send(joinPacket.Serialize());
+                        }
                     }
-                    for (int j = 0; j < ConectionInfo.Count; j++)
+
+                    for (int j = 0; j < ConnectionInfo.Count; j++)
                     {
                         if (j != i)
                         {
-                            ConectionInfo[j].socket.Send(buffer);
-                        }
-                    }
-                    if (type == PacketType.Move)
-                    {
-                        MovePacket movePKT = new MovePacket();
-                        movePKT.Deserialize(br);
-
-                        //var sender = ConectionInfo[i].playerdata; for later use
-
-                        byte[] forwardBuffer = movePKT.Serialize();
-
-                        for (int j = 0; j < ConectionInfo.Count; j++)
-                        {
-                            if (j != i)
-                            {
-                                ConectionInfo[j].socket.Send(forwardBuffer);
-                            }
+                            ConnectionInfo[j].socket.Send(packet.Serialize());
                         }
                     }
                 }
@@ -112,7 +102,7 @@ public class Server : MonoBehaviour
             Debug.LogError("Client disconnected.");
             //NetworkObjects.Instance.Destroy(playerobject);
             player.socket.Close();
-            ConectionInfo.Remove(player);
+            ConnectionInfo.Remove(player);
             yield break;
         }
         StartCoroutine(Pingclient(player));

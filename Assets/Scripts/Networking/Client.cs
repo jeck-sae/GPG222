@@ -49,8 +49,8 @@ public class Client : MonoBehaviour
 
         try
         {
-            this.playerData = playerData; // ✅ save player data for later use
-
+            this.playerData = playerData;
+            
             socket.Connect(ipAddress, port);
             connected = true;
             OnConnect?.Invoke();
@@ -80,31 +80,22 @@ public class Client : MonoBehaviour
 
             while (rms.Position < rms.Length)
             {
-                var type = (PacketType)br.ReadInt32();
-                switch (type)
+                var packet = BasePacket.DeserializePacket(br);
+                switch (packet.type)
                 {
                     case PacketType.Move:
-                        var movePacket = new MovePacket();
-                        movePacket.Deserialize(br);
-                        NetworkEvents.OnMovePacketReceived(movePacket);
+                        NetworkEvents.OnMovePacketReceived(packet as MovePacket);
                         break;
                     case PacketType.LoadLevel:
-                        var loadLevelPacket = new LoadLevelPacket();
-                        loadLevelPacket.Deserialize(br);
-                        NetworkEvents.OnLoadLevelPacketReceived(loadLevelPacket);
+                        NetworkEvents.OnLoadLevelPacketReceived(packet as LoadLevelPacket);
                         break;
                     case PacketType.PlayerJoin:
-                        var joinPacket = new PlayerJoinPacket();
-                        joinPacket.Deserialize(br);
-                        NetworkEvents.OnPlayerJoinPacketReceived(joinPacket);
+                        NetworkEvents.OnPlayerJoinPacketReceived(packet as PlayerJoinPacket);
                         break;
                     case PacketType.PlayerReachedGoal:
-                        var goalPacket = new PlayerReachedGoalPacket();
-                        goalPacket.Deserialize(br);
-                        NetworkEvents.OnPlayerReachedGoalPacketReceived(goalPacket);
+                        NetworkEvents.OnPlayerReachedGoalPacketReceived(packet as PlayerReachedGoalPacket);
                         break;
                     case PacketType.ping:
-                        // Do nothing or handle ping
                         break;
                     default:
                         Debug.LogError("Unknown packet type received.");

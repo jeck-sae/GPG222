@@ -1679,7 +1679,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   usernameField: {fileID: 383164519}
   ipField: {fileID: 1356265629}
-  loadSceneOnConnect: Level1
+  loadSceneOnConnect: LevelSelect
 --- !u!1 &1633378405
 GameObject:
   m_ObjectHideFlags: 0

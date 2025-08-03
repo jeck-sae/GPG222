@@ -15,6 +15,7 @@ public class SceneLoading : MonoBehaviour
 
     private void LoadLevel(LoadLevelPacket packet)
     {
+
         SceneManager.LoadScene(packet.levelId);
     }
 

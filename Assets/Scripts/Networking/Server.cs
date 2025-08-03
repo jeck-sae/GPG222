@@ -70,6 +70,24 @@ public class Server : MonoBehaviour
                             ConectionInfo[j].socket.Send(buffer);
                         }
                     }
+                    if (type == PacketType.Move)
+                    {
+                        MovePacket movePKT = new MovePacket();
+                        movePKT.Deserialize(br);
+
+                        var sender = ConectionInfo[i].playerdata;
+                        Debug.Log($"[SERVER] {sender.Name} moved to ({movePKT.x}, {movePKT.y})");
+
+                        byte[] forwardBuffer = movePKT.Serialize();
+
+                        for (int j = 0; j < ConectionInfo.Count; j++)
+                        {
+                            if (j != i)
+                            {
+                                ConectionInfo[j].socket.Send(forwardBuffer);
+                            }
+                        }
+                    }
                 }
             }
         }

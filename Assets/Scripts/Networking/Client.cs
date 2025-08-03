@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Sockets;
 using UnityEngine;
 using Networking;
+using System.Collections;
 
 public class Client : MonoBehaviour
 {
@@ -37,6 +38,10 @@ public class Client : MonoBehaviour
         ReceivePackets();
     }
 
+    void Start()
+    {
+        StartCoroutine(SendPosition());
+    }
     public void ConnectToServer(string ipAddress, PlayerData playerData)
     {
         if (connected)
@@ -126,5 +131,23 @@ public class Client : MonoBehaviour
         {
             Debug.LogError("Failed to send packet: " + e.Message);
         }
+    }
+
+    private IEnumerator SendPosition()
+    {
+        yield return new WaitForSeconds(0.1f);
+        if (connected && playerData != null)
+        {
+            try
+            {
+            Vector3 pos = transform.position;
+
+            var MovePacket = new MovePacket(playerData.ID, pos.x, pos.y);
+            SendPacket(MovePacket);
+            }
+            catch
+            {}
+        }
+        StartCoroutine(SendPosition());
     }
 }

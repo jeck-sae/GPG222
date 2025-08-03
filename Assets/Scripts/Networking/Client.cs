@@ -13,7 +13,7 @@ public class Client : MonoBehaviour
 
     private Socket socket;
     private int port = 6969;
-    private bool connected = false;
+    public bool connected = false;
 
     public PlayerData playerData { get; private set; }
 
@@ -38,10 +38,6 @@ public class Client : MonoBehaviour
         ReceivePackets();
     }
 
-    void Start()
-    {
-        StartCoroutine(SendPosition());
-    }
     public void ConnectToServer(string ipAddress, PlayerData playerData)
     {
         if (connected)
@@ -126,13 +122,13 @@ public class Client : MonoBehaviour
         {
             try
             {
-            Vector3 pos = transform.position;
+                Vector3 pos = transform.position;
 
-            var MovePacket = new MovePacket(playerData.ID, pos.x, pos.y);
-            SendPacket(MovePacket);
+                var MovePacket = new MovePacket(playerData.ID, pos.x, pos.y);
+                SendPacket(MovePacket);
             }
             catch
-            {}
+            { }
         }
         StartCoroutine(SendPosition());
     }

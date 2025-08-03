@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1238838602355811191}
   - component: {fileID: 4574806231206430248}
   - component: {fileID: 9155052719971839356}
+  - component: {fileID: 7501941703929263639}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -186,3 +187,15 @@ MonoBehaviour:
   rayOffsetLeft: {x: -0.5, y: -0.5}
   rayOffsetCenter: {x: 0, y: -0.5}
   rayOffsetRight: {x: 0.5, y: -0.5}
+--- !u!114 &7501941703929263639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1345004875728841532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53062537caf8d0243839bd439a358f05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

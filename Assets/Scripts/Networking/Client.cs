@@ -13,7 +13,7 @@ public class Client : MonoBehaviour
 
     private Socket socket;
     private int port = 6969;
-    private bool connected = false;
+    public bool connected = false;
 
     public PlayerData playerData { get; private set; }
 
@@ -38,10 +38,6 @@ public class Client : MonoBehaviour
         ReceivePackets();
     }
 
-    void Start()
-    {
-        StartCoroutine(SendPosition());
-    }
     public void ConnectToServer(string ipAddress, PlayerData playerData)
     {
         if (connected)
@@ -49,8 +45,8 @@ public class Client : MonoBehaviour
 
         try
         {
-            this.playerData = playerData; // ✅ save player data for later use
-
+            this.playerData = playerData;
+            
             socket.Connect(ipAddress, port);
             connected = true;
             OnConnect?.Invoke();
@@ -80,31 +76,22 @@ public class Client : MonoBehaviour
 
             while (rms.Position < rms.Length)
             {
-                var type = (PacketType)br.ReadInt32();
-                switch (type)
+                var packet = BasePacket.DeserializePacket(br);
+                switch (packet.type)
                 {
                     case PacketType.Move:
-                        var movePacket = new MovePacket();
-                        movePacket.Deserialize(br);
-                        NetworkEvents.OnMovePacketReceived(movePacket);
+                        NetworkEvents.OnMovePacketReceived(packet as MovePacket);
                         break;
                     case PacketType.LoadLevel:
-                        var loadLevelPacket = new LoadLevelPacket();
-                        loadLevelPacket.Deserialize(br);
-                        NetworkEvents.OnLoadLevelPacketReceived(loadLevelPacket);
+                        NetworkEvents.OnLoadLevelPacketReceived(packet as LoadLevelPacket);
                         break;
                     case PacketType.PlayerJoin:
-                        var joinPacket = new PlayerJoinPacket();
-                        joinPacket.Deserialize(br);
-                        NetworkEvents.OnPlayerJoinPacketReceived(joinPacket);
+                        NetworkEvents.OnPlayerJoinPacketReceived(packet as PlayerJoinPacket);
                         break;
                     case PacketType.PlayerReachedGoal:
-                        var goalPacket = new PlayerReachedGoalPacket();
-                        goalPacket.Deserialize(br);
-                        NetworkEvents.OnPlayerReachedGoalPacketReceived(goalPacket);
+                        NetworkEvents.OnPlayerReachedGoalPacketReceived(packet as PlayerReachedGoalPacket);
                         break;
                     case PacketType.ping:
-                        // Do nothing or handle ping
                         break;
                     default:
                         Debug.LogError("Unknown packet type received.");
@@ -135,13 +122,13 @@ public class Client : MonoBehaviour
         {
             try
             {
-            Vector3 pos = transform.position;
+                Vector3 pos = transform.position;
 
-            var MovePacket = new MovePacket(playerData.ID, pos.x, pos.y);
-            SendPacket(MovePacket);
+                var MovePacket = new MovePacket(playerData.ID, pos.x, pos.y);
+                SendPacket(MovePacket);
             }
             catch
-            {}
+            { }
         }
         StartCoroutine(SendPosition());
     }

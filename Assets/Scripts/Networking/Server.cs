@@ -75,7 +75,7 @@ public class Server : MonoBehaviour
                         MovePacket movePKT = new MovePacket();
                         movePKT.Deserialize(br);
 
-                        var sender = ConectionInfo[i].playerdata;
+                        //var sender = ConectionInfo[i].playerdata; for later use
 
                         byte[] forwardBuffer = movePKT.Serialize();
 

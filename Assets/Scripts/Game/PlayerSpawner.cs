@@ -12,7 +12,7 @@ public class PlayerSpawner : MonoBehaviour
         foreach (var e in GameManager.instance.GetAllPlayers())
         {
             var go = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
-            go.GetOrAddComponent<Enemy>().info = e;
+            go.GetOrAddComponent<EnemyPlayer>().info = e;
             e.Instance = go;
             go.name = e.Name;
             //setup enemy sprite and stuff

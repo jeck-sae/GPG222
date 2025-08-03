@@ -83,11 +83,6 @@ public class Client : MonoBehaviour
                         movePacket.Deserialize(br);
                         NetworkEvents.OnMovePacketReceived(movePacket);
                         break;
-                    case PacketType.GameStart:
-                        var gameStartPacket = new GameStartPacket();
-                        gameStartPacket.Deserialize(br);
-                        NetworkEvents.OnGameStartPacketReceived(gameStartPacket);
-                        break;
                     case PacketType.LoadLevel:
                         var loadLevelPacket = new LoadLevelPacket();
                         loadLevelPacket.Deserialize(br);

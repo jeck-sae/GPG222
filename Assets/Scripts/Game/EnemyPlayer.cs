@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class EnemyPlayer : MonoBehaviour
 {
     public PlayerData info;
     

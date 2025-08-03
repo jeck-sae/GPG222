@@ -4,14 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Networking;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-
-    Dictionary<string, PlayerData>  players = new ();
-    public PlayerData MyInfo { get; protected set; }
-
+    
+    protected int winners;
+    
+    
     private void Awake()
     {
         if (instance != null)
@@ -21,39 +22,56 @@ public class GameManager : MonoBehaviour
         }
         instance = this;
         DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded += OnChangedScene;
     }
+
+    private void OnChangedScene(Scene arg0, LoadSceneMode arg1)
+    {
+        winners = 0;
+    }
+    
     private void OnEnable()
     {
-        NetworkEvents.PlayerJoinPacketReceived += PlayerJoined;
+        NetworkEvents.PlayerReachedGoalPacketReceived += EnemyPlayerReachedGoal;
     }
+
     private void OnDisable()
     {
-        NetworkEvents.PlayerJoinPacketReceived -= PlayerJoined;
+        NetworkEvents.PlayerReachedGoalPacketReceived -= EnemyPlayerReachedGoal;
     }
     
-    
-    public List<PlayerData> GetAllPlayers() => players.Values.ToList();
-    public PlayerData GetPlayerInfo(string id)
-    {
-        return players.GetValueOrDefault(id);
-    }
-    
-    
-    private void PlayerJoined(PlayerJoinPacket data)
-    {
-        if (players.ContainsKey(data.playerId))
-        {
-            Debug.LogWarning("Player ID already exists: " +  data.playerId);
-            return;
-        }
 
-        if (MyInfo == null)
-        {
-            MyInfo = new PlayerData(data.playerId, data.playerName);
-            return;
-        }
+    private void EnemyPlayerReachedGoal(PlayerReachedGoalPacket obj)
+    {
+        AddWinner();
+    }
+
+    protected void AddWinner()
+    {
+        winners++;
+        if (winners >= PlayerTracker.Count)
+            Invoke(nameof(OpenLevelSelect), 5);
+    }
+    
+    public void ReachedGoal()
+    {
+        var player = FindAnyObjectByType<playerMovement>();
+        if (player != null) player.enabled = false;
         
-        players.Add(data.playerId, new PlayerData(data.playerId, data.playerName));
+        string playerId = Client.Instance.playerData.ID;
+        float timeTaken = Time.timeSinceLevelLoad;
+        
+        var packet = new PlayerReachedGoalPacket(playerId, timeTaken);
+        Client.Instance.SendPacket(packet);
+        
+        LeaderboardManager.Instance.AddEntry(playerId, timeTaken);
+        AddWinner();
     }
-
+    
+    public void OpenLevelSelect()
+    {
+        SceneManager.LoadScene("LevelSelect");
+    }
+    
+    
 }

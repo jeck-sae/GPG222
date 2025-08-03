@@ -6,13 +6,7 @@ public class GoalTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            string playerId = Client.Instance.playerData.ID;
-            float timeTaken = Time.timeSinceLevelLoad;
-
-            var packet = new PlayerReachedGoalPacket(playerId, timeTaken);
-            Client.Instance.SendPacket(packet);
-
-            LeaderboardManager.Instance.AddEntry(playerId, timeTaken);
+            GameManager.instance.ReachedGoal();
         }
     }
 }

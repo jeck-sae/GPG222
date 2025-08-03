@@ -58,7 +58,7 @@ public class LeaderboardManager : MonoBehaviour
         int rank = 1;
         foreach (var entry in leaderboard)
         {
-            leaderboardText.text += $"{rank}. {entry.playerId}: {entry.timeTaken:F2}s\n";
+            leaderboardText.text += $"{rank}. {PlayerTracker.GetPlayerInfo(entry.playerId).Name}: {entry.timeTaken:F2}s\n";
             rank++;
         }
     }

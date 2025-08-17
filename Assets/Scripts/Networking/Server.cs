@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Xml;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -12,11 +13,15 @@ public class Server : MonoBehaviour
     Socket serverSocket;
     int port = 6969;
 
-    [ShowInInspector] List<ConectionInfo> ConnectionInfo;
+    [ShowInInspector] List<ConnectionInfo> connectionInfo;
 
+    private string currentLevel;
+    private List<string> winners;
+    private float levelStartTime;
+    
     void Start()
     {
-        ConnectionInfo = new List<ConectionInfo>();
+        connectionInfo = new List<ConnectionInfo>();
         serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         serverSocket.Bind(new IPEndPoint(IPAddress.Any, port));
         serverSocket.Listen(5);
@@ -27,10 +32,10 @@ public class Server : MonoBehaviour
     {
         try
         {
-            ConectionInfo CI = new ConectionInfo() { socket = serverSocket.Accept() };
-            ConnectionInfo.Add(CI);
+            ConnectionInfo CI = new ConnectionInfo() { socket = serverSocket.Accept() };
+            connectionInfo.Add(CI);
             Debug.LogError("Client connected: ");
-            StartCoroutine(Pingclient(CI));
+            StartCoroutine(PingClient(CI));
         }
         catch
         {
@@ -39,43 +44,25 @@ public class Server : MonoBehaviour
         try
         {
 
-            for (int i = 0; i < ConnectionInfo.Count; i++)
+            for (int i = 0; i < connectionInfo.Count; i++)
             {
-                if (ConnectionInfo[i].socket.Available > 0)
+                if (connectionInfo[i].socket.Available > 0)
                 {
-                    byte[] buffer = new byte[ConnectionInfo[i].socket.Available];
-                    ConnectionInfo[i].socket.Receive(buffer);
+                    byte[] buffer = new byte[connectionInfo[i].socket.Available];
+                    connectionInfo[i].socket.Receive(buffer);
 
                     var rms = new MemoryStream(buffer);
                     var br = new BinaryReader(rms);
 
                     var packet = BasePacket.DeserializePacket(br);
                     
-                    if (packet.type == PacketType.PlayerJoin)
-                    {
-                        PlayerJoinPacket joinPKT = packet as PlayerJoinPacket;
+                    HandlePacket(packet, connectionInfo[i]);
 
-                        PlayerData pd = new PlayerData(joinPKT.playerId, joinPKT.playerName);
-                        ConnectionInfo[i].playerdata = pd;
-                        Debug.LogError(ConnectionInfo[i].playerdata.Name + " joined");
-
-                        // Send info of already connected players to the new one
-                        foreach (var alreadyConnected in ConnectionInfo)
-                        {
-                            if(alreadyConnected.playerdata.ID == pd.ID)
-                                continue;
-                            
-                            PlayerJoinPacket joinPacket = new PlayerJoinPacket(
-                                alreadyConnected.playerdata.ID, 0, alreadyConnected.playerdata.Name);
-                            ConnectionInfo[i].socket.Send(joinPacket.Serialize());
-                        }
-                    }
-
-                    for (int j = 0; j < ConnectionInfo.Count; j++)
+                    for (int j = 0; j < connectionInfo.Count; j++)
                     {
                         if (j != i)
                         {
-                            ConnectionInfo[j].socket.Send(packet.Serialize());
+                            connectionInfo[j].socket.Send(packet.Serialize());
                         }
                     }
                 }
@@ -86,9 +73,67 @@ public class Server : MonoBehaviour
             Debug.LogError(e.Message);
         }
     }
-    IEnumerator Pingclient(ConectionInfo player)
+
+    void HandlePacket(BasePacket packet, ConnectionInfo sender)
     {
-        pingPacket packet = new pingPacket();
+
+        switch (packet.type)
+        {
+            case PacketType.PlayerJoin:
+                PlayerJoinPacket joinPKT = packet as PlayerJoinPacket;
+
+                // Save the new player's data
+                PlayerData pd = new PlayerData(joinPKT.playerId, joinPKT.playerName);
+                sender.playerdata = pd;
+                Debug.LogError(sender.playerdata.Name + " joined");
+
+                // Send info of already connected players to the new one
+                foreach (var alreadyConnected in connectionInfo)
+                {
+                    if(alreadyConnected.playerdata.ID == pd.ID)
+                        continue;
+                                
+                    PlayerJoinPacket joinPacket = new PlayerJoinPacket(
+                        alreadyConnected.playerdata.ID, 0, alreadyConnected.playerdata.Name);
+                    sender.socket.Send(joinPacket.Serialize());
+                }
+
+                // Send the current active level to the new player
+                if (!string.IsNullOrWhiteSpace(currentLevel))
+                {
+                    LoadLevelPacket levelPacket = new LoadLevelPacket(currentLevel); 
+                    sender.socket.Send(levelPacket.Serialize());
+                }
+                break;
+            
+            
+            case PacketType.LoadLevel:
+                LoadLevelPacket loadPacket = packet as LoadLevelPacket;
+                
+                // Reset game state
+                currentLevel = loadPacket.levelId;
+                winners = new();
+                levelStartTime = Time.time;
+                break;
+            
+            
+            case PacketType.PlayerReachedGoal:
+                PlayerReachedGoalPacket reachedGoalPacket = packet as PlayerReachedGoalPacket;
+                
+                // Calculate the time taken server side
+                reachedGoalPacket.timeTaken = Time.time - levelStartTime;
+                winners.Add(reachedGoalPacket.playerId);
+                
+                if (winners.Count >= connectionInfo.Count)
+                    currentLevel = string.Empty;
+                break;
+        }
+    }
+    
+    
+    IEnumerator PingClient(ConnectionInfo player)
+    {
+        PingPacket packet = new PingPacket();
         yield return new WaitForSeconds(1f);
         var buffer = packet.Serialize();
 
@@ -99,18 +144,21 @@ public class Server : MonoBehaviour
         }
         catch (Exception e)
         {
-            //Debug.Log("nothing recived");
-            Debug.LogError("Failed to send packet: " + e.Message);
             Debug.LogError("Client disconnected.");
-            //NetworkObjects.Instance.Destroy(playerobject);
+            
+            if (winners.Contains(player.playerdata.ID))
+                winners.Remove(player.playerdata.ID);
+            
+            
             player.socket.Close();
-            ConnectionInfo.Remove(player);
+            connectionInfo.Remove(player);
             yield break;
         }
-        StartCoroutine(Pingclient(player));
+        StartCoroutine(PingClient(player));
     }
 }
-public class ConectionInfo
+
+public class ConnectionInfo
 {
     public PlayerData playerdata;
     public Socket socket;

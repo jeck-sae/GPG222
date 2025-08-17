@@ -10,7 +10,10 @@ public class PlayerTracker : MonoBehaviour
 {
     protected static PlayerTracker instance;
     [ShowInInspector] Dictionary<string, PlayerData>  players = new ();
-    public PlayerData MyInfo { get; protected set; }
+    [ShowInInspector] public static PlayerData myself { get; private set; }
+
+    public static event Action<PlayerData> OnPlayerJoined;
+    public static event Action<PlayerData> OnPlayerLeft; // NOT IMPLEMENTED
     
     public static int Count => instance.players.Count + 1;
 
@@ -31,7 +34,17 @@ public class PlayerTracker : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    
+    private void Start()
+    {
+        Client.Instance.OnConnect += AddMyself;
+    }
+
+    void AddMyself()
+    {
+        myself = Client.Instance.playerData;
+        players.Add(myself.ID, myself);
+    }
+
     private void OnEnable()
     {
         NetworkEvents.PlayerJoinPacketReceived += PlayerJoined;
@@ -40,6 +53,7 @@ public class PlayerTracker : MonoBehaviour
     private void OnDisable()
     {
         NetworkEvents.PlayerJoinPacketReceived -= PlayerJoined;
+        if(Client.Instance) Client.Instance.OnConnect -= AddMyself;
     }
     
     private void PlayerJoined(PlayerJoinPacket data)
@@ -50,6 +64,8 @@ public class PlayerTracker : MonoBehaviour
             return;
         }
 
-        players.Add(data.playerId, new PlayerData(data.playerId, data.playerName));
+        var playerData = new PlayerData(data.playerId, data.playerName);
+        players.Add(data.playerId, playerData);
+        OnPlayerJoined?.Invoke(playerData);
     }
 }

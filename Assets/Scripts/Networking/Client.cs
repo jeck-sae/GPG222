@@ -111,7 +111,7 @@ public class Client : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogError("Failed to send packet: " + e.Message);
+            Debug.LogError("Failed to send packet: " + e.Message, this);
         }
     }
 
@@ -127,8 +127,10 @@ public class Client : MonoBehaviour
                 var MovePacket = new MovePacket(playerData.ID, pos.x, pos.y);
                 SendPacket(MovePacket);
             }
-            catch
-            { }
+            catch (Exception e)
+            {
+                Debug.LogError(e.Message, this);
+            }
         }
         StartCoroutine(SendPosition());
     }

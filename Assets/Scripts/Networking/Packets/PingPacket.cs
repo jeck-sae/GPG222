@@ -1,10 +1,10 @@
 using System.IO;
 
-public class pingPacket : BasePacket
+public class PingPacket : BasePacket
 {
     public string ping = "";
 
-    public pingPacket()
+    public PingPacket()
     {
         type = PacketType.ping;
     }

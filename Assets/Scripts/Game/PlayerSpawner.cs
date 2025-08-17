@@ -1,4 +1,5 @@
 using System;
+using Networking;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,13 +10,39 @@ public class PlayerSpawner : MonoBehaviour
     
     private void Start()
     {
-        foreach (var e in PlayerTracker.GetAllPlayers())
+        if(!transform) Debug.LogWarning("Player spawn point not set", this);
+        if(!enemyPrefab) Debug.LogWarning("Enemy prefab not set", this);
+        
+        foreach (var playerData in PlayerTracker.GetAllPlayers())
         {
-            var go = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
-            go.GetOrAddComponent<EnemyPlayer>().info = e;
-            e.Instance = go;
-            go.name = e.Name;
-            //setup enemy sprite and stuff
+            SpawnPlayer(playerData);
         }
+    }
+    
+    private void OnEnable()
+    {
+        PlayerTracker.OnPlayerJoined += PlayerJoined;
+    }
+
+    private void OnDisable()
+    {
+        PlayerTracker.OnPlayerJoined -= PlayerJoined;
+    }
+    
+    private void PlayerJoined(PlayerData data)
+    {
+        SpawnPlayer(data);
+    }
+
+    void SpawnPlayer(PlayerData data)
+    {
+        if (data.ID == PlayerTracker.myself.ID)
+            return;
+        
+        var go = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+        go.name = data.Name;
+        data.Instance = go;
+        go.GetOrAddComponent<EnemyPlayer>().Initialize(data);
+        //setup enemy sprite and stuff
     }
 }

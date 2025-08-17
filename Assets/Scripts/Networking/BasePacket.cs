@@ -32,7 +32,7 @@ public abstract class BasePacket
                 playerReachedGoalPacket.Deserialize(br);
                 return playerReachedGoalPacket;
             case PacketType.ping:
-                var pingPacket = new pingPacket();
+                var pingPacket = new PingPacket();
                 pingPacket.Deserialize(br);
                 return pingPacket;
             default:

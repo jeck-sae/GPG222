@@ -48,12 +48,14 @@ public class PlayerTracker : MonoBehaviour
     private void OnEnable()
     {
         NetworkEvents.PlayerJoinPacketReceived += PlayerJoined;
+        NetworkEvents.PlayerLeftPacketReceived += PlayerLeft;
     }
 
     private void OnDisable()
     {
         NetworkEvents.PlayerJoinPacketReceived -= PlayerJoined;
-        if(Client.Instance) Client.Instance.OnConnect -= AddMyself;
+        NetworkEvents.PlayerLeftPacketReceived -= PlayerLeft;
+        if (Client.Instance) Client.Instance.OnConnect -= AddMyself;
     }
     
     private void PlayerJoined(PlayerJoinPacket data)
@@ -67,5 +69,21 @@ public class PlayerTracker : MonoBehaviour
         var playerData = new PlayerData(data.playerId, data.playerName);
         players.Add(data.playerId, playerData);
         OnPlayerJoined?.Invoke(playerData);
+    }
+    private void PlayerLeft(PlayerLeftPacket pkt) => Remove(pkt.playerId);
+
+    public static void Remove(string id)
+    {
+        if (!instance.players.TryGetValue(id, out var pd)) return;
+
+        if (pd.Instance != null)
+        {
+            Destroy(pd.Instance);
+            pd.Instance = null;
+        }
+
+        instance.players.Remove(id);
+        OnPlayerLeft?.Invoke(pd);
+        Debug.Log($"Player removed: {id}");
     }
 }

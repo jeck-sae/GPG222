@@ -18,7 +18,7 @@ public class Server : MonoBehaviour
     private string currentLevel;
     private List<string> winners;
     private float levelStartTime;
-    
+
     void Start()
     {
         connectionInfo = new List<ConnectionInfo>();
@@ -55,7 +55,7 @@ public class Server : MonoBehaviour
                     var br = new BinaryReader(rms);
 
                     var packet = BasePacket.DeserializePacket(br);
-                    
+
                     HandlePacket(packet, connectionInfo[i]);
 
                     for (int j = 0; j < connectionInfo.Count; j++)
@@ -90,9 +90,9 @@ public class Server : MonoBehaviour
                 // Send info of already connected players to the new one
                 foreach (var alreadyConnected in connectionInfo)
                 {
-                    if(alreadyConnected.playerdata.ID == pd.ID)
+                    if (alreadyConnected.playerdata.ID == pd.ID)
                         continue;
-                                
+
                     PlayerJoinPacket joinPacket = new PlayerJoinPacket(
                         alreadyConnected.playerdata.ID, 0, alreadyConnected.playerdata.Name);
                     sender.socket.Send(joinPacket.Serialize());
@@ -101,36 +101,36 @@ public class Server : MonoBehaviour
                 // Send the current active level to the new player
                 if (!string.IsNullOrWhiteSpace(currentLevel))
                 {
-                    LoadLevelPacket levelPacket = new LoadLevelPacket(currentLevel); 
+                    LoadLevelPacket levelPacket = new LoadLevelPacket(currentLevel);
                     sender.socket.Send(levelPacket.Serialize());
                 }
                 break;
-            
-            
+
+
             case PacketType.LoadLevel:
                 LoadLevelPacket loadPacket = packet as LoadLevelPacket;
-                
+
                 // Reset game state
                 currentLevel = loadPacket.levelId;
                 winners = new();
                 levelStartTime = Time.time;
                 break;
-            
-            
+
+
             case PacketType.PlayerReachedGoal:
                 PlayerReachedGoalPacket reachedGoalPacket = packet as PlayerReachedGoalPacket;
-                
+
                 // Calculate the time taken server side
                 reachedGoalPacket.timeTaken = Time.time - levelStartTime;
                 winners.Add(reachedGoalPacket.playerId);
-                
+
                 if (winners.Count >= connectionInfo.Count)
                     currentLevel = string.Empty;
                 break;
         }
     }
-    
-    
+
+
     IEnumerator PingClient(ConnectionInfo player)
     {
         PingPacket packet = new PingPacket();
@@ -145,11 +145,27 @@ public class Server : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogError("Client disconnected.");
-            
-            if (winners.Contains(player.playerdata.ID))
+
+            if (winners.Contains(player.playerdata.ID)) 
                 winners.Remove(player.playerdata.ID);
-            
-            
+
+            if (player.playerdata != null)
+            {
+                var leftPkt = new PlayerLeftPacket(player.playerdata.ID);
+                foreach (ConnectionInfo ci in connectionInfo)
+                {
+                    if (ci == player) continue;
+                    try
+                    { 
+                        ci.socket.Send(leftPkt.Serialize()); 
+                    } 
+                    catch 
+                    {
+                    }
+                }
+            }
+
+
             player.socket.Close();
             connectionInfo.Remove(player);
             yield break;
@@ -157,6 +173,7 @@ public class Server : MonoBehaviour
         StartCoroutine(PingClient(player));
     }
 }
+
 
 public class ConnectionInfo
 {

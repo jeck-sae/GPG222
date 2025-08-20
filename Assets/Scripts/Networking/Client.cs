@@ -93,6 +93,10 @@ public class Client : MonoBehaviour
                         break;
                     case PacketType.ping:
                         break;
+                    case PacketType.PlayerLeft:
+                        NetworkEvents.OnPlayerLeftPacketReceived(packet as PlayerLeftPacket);
+                        break;
+
                     default:
                         Debug.LogError("Unknown packet type received.");
                         break;

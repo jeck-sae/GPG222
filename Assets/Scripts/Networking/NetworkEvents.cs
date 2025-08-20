@@ -9,6 +9,12 @@ namespace Networking
         public static event Action<PlayerReachedGoalPacket>  PlayerReachedGoalPacketReceived;
         public static event Action<LoadLevelPacket>  LoadLevelPacketReceived;
         public static event Action<PlayerJoinPacket>  PlayerJoinPacketReceived;
+        public static event Action<PlayerLeftPacket> PlayerLeftPacketReceived;
+
+        public static void OnPlayerLeftPacketReceived(PlayerLeftPacket pkt)
+        {
+            PlayerLeftPacketReceived?.Invoke(pkt);
+        }
 
         public static void OnMovePacketReceived(MovePacket packet)
         {

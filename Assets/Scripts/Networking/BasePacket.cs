@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using UnityEngine;
 
 public abstract class BasePacket
@@ -35,6 +35,10 @@ public abstract class BasePacket
                 var pingPacket = new PingPacket();
                 pingPacket.Deserialize(br);
                 return pingPacket;
+            case PacketType.PlayerLeft:
+                var playerLeftPacket = new PlayerLeftPacket();
+                playerLeftPacket.Deserialize(br);
+                return playerLeftPacket;
             default:
                 Debug.LogError("Unknown packet type");
                 break;

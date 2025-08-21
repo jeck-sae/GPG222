@@ -13,9 +13,9 @@ public class PlayerTracker : MonoBehaviour
     [ShowInInspector] public static PlayerData myself { get; private set; }
 
     public static event Action<PlayerData> OnPlayerJoined;
-    public static event Action<PlayerData> OnPlayerLeft; // NOT IMPLEMENTED
+    public static event Action<PlayerData> OnPlayerLeft;
     
-    public static int Count => instance.players.Count + 1;
+    public static int Count => instance.players.Count;
 
     public static List<PlayerData> GetAllPlayers() 
         => instance.players.Values.ToList();
@@ -39,7 +39,7 @@ public class PlayerTracker : MonoBehaviour
         Client.Instance.OnConnect += AddMyself;
     }
 
-    void AddMyself()
+    private void AddMyself()
     {
         myself = Client.Instance.playerData;
         players.Add(myself.ID, myself);
@@ -70,9 +70,13 @@ public class PlayerTracker : MonoBehaviour
         players.Add(data.playerId, playerData);
         OnPlayerJoined?.Invoke(playerData);
     }
-    private void PlayerLeft(PlayerLeftPacket pkt) => Remove(pkt.playerId);
+    private void PlayerLeft(PlayerLeftPacket pkt)
+    {
+        OnPlayerLeft?.Invoke(GetPlayerInfo(pkt.playerId));
+        Remove(pkt.playerId);
+    }
 
-    public static void Remove(string id)
+    private static void Remove(string id)
     {
         if (!instance.players.TryGetValue(id, out var pd)) return;
 

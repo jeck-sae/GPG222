@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1366353637205733578}
   - component: {fileID: 6917546806140719211}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: TileGround5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8992189445040485344}
   - component: {fileID: 6204243583700069701}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: TileGround2 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178,7 +178,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5063741820021033301}
   - component: {fileID: 2091768851866511029}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: TileGround18
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,7 +262,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4708658939454271635}
   - component: {fileID: 993264845943085066}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: TileGround5 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -345,7 +345,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5587520852186201630}
-  m_Layer: 0
+  - component: {fileID: 3845464821657819529}
+  m_Layer: 3
   m_Name: Ground2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -362,7 +363,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -17.614, y: -4.976329, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5160650364828091209}
@@ -375,6 +376,51 @@ Transform:
   - {fileID: 5063741820021033301}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &3845464821657819529
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5236211599675987327}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -1.43, y: 0.41}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 3.97, y: 2.06}
+  m_EdgeRadius: 0
 --- !u!1 &6050077367855718498
 GameObject:
   m_ObjectHideFlags: 0
@@ -385,7 +431,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3431229082660857432}
   - component: {fileID: 3810970529689520079}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: TileGround2 (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -469,7 +515,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3153236847797621518}
   - component: {fileID: 6275758897386953589}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: TileGround29
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -553,7 +599,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2699071898137809940}
   - component: {fileID: 4616206226903341448}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: TileGround2 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -637,7 +683,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5160650364828091209}
   - component: {fileID: 6336747211079495387}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: TileGround2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

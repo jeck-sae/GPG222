@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 6624785849360256357}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 33.868313, y: 8.435423, z: -10}
+  m_LocalPosition: {x: 51.1, y: 8.435423, z: -10}
   m_LocalScale: {x: 3.5688796, y: 3.4258308, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -44,7 +44,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -69,7 +69,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 11.179243
+  orthographic size: 9.559708
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -182,7 +182,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 20
   m_Sprite: {fileID: 21300000, guid: 3fc802ddaef4d3f4f8146b441dade515, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -237,7 +237,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 4.16, y: 4.1}
   m_EdgeRadius: 0
 --- !u!50 &4115041988824354526
 Rigidbody2D:
@@ -280,7 +280,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 7
   Drag: 1
-  jumpForce: 6
+  jumpForce: 9
   fallMultiplier: 2.5
   lowJumpMultiplier: 2
   dashSpeed: 100

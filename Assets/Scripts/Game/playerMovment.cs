@@ -39,8 +39,10 @@ public class playerMovement : MonoBehaviour
     void Update()
     {
         float xInput = Input.GetAxisRaw("Horizontal");
-        rb.velocity = new Vector2(xInput * moveSpeed, rb.velocity.y);
-
+        if (!isDashing)
+        {
+            rb.velocity = new Vector2(xInput * moveSpeed, rb.velocity.y);
+        }
         Vector2 pos = transform.position;
 
         bool left = Physics2D.Raycast(pos + rayOffsetLeft, Vector2.down, rayLength, groundLayer);

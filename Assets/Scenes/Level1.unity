@@ -4725,6 +4725,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1850251268113746475, guid: c0f8553bd5a1c6644a9dac3e153e16b3, type: 3}
+      propertyPath: dashDrag
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1850251268113746475, guid: c0f8553bd5a1c6644a9dac3e153e16b3, type: 3}
       propertyPath: dashSpeed
       value: 125
       objectReference: {fileID: 0}
@@ -4734,7 +4738,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1850251268113746475, guid: c0f8553bd5a1c6644a9dac3e153e16b3, type: 3}
       propertyPath: dashDuration
-      value: 0.3
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 1850251268113746475, guid: c0f8553bd5a1c6644a9dac3e153e16b3, type: 3}
       propertyPath: fallMultiplier

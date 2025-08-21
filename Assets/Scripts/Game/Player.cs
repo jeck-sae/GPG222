@@ -12,18 +12,24 @@ public class Player : MonoBehaviour
     private IEnumerator SendPosition()
     {
         yield return new WaitForSeconds(0.1f);
-        if (Client.Instance.connected && Client.Instance.playerData != null)
+        try
         {
-            try
+            if (Client.Instance.connected && Client.Instance.playerData != null)
             {
-                Vector3 pos = transform.position;
+                try
+                {
+                    Vector3 pos = transform.position;
 
-                var MovePacket = new MovePacket(Client.Instance.playerData.ID, pos.x, pos.y);
-                Client.Instance.SendPacket(MovePacket);
+                    var MovePacket = new MovePacket(Client.Instance.playerData.ID, pos.x, pos.y);
+                    Client.Instance.SendPacket(MovePacket);
+                }
+                catch
+                {}
             }
-            catch
-            { }
         }
+        catch
+        {}
+        
         StartCoroutine(SendPosition());
     }
 }
